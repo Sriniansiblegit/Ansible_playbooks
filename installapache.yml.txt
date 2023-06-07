@@ -1,0 +1,63 @@
+- hosts: all
+  #remote_user: root
+  become: true
+  tasks:
+  - name: Create Group for apacheadm
+    group:
+      name: apacheadm
+      state: present
+  - name: Create user srini
+    user:
+      name: srini
+      password: srini123
+      shell: /bin/bash
+      group: apacheadm
+      createhome: yes
+
+  - name: Installing apache
+    yum:
+      name: httpd
+      state: latest
+
+  - name: Changing ownership of the file to srini
+    file:
+      path: /etc/httpd
+      owner: srini
+      group: apacheadm
+      recurse: yes
+  - name: Changing the users in httpd conf file
+    lineinfile:
+      path: /etc/httpd/conf/httpd.conf
+      regexp: 'User apache'
+      line: 'User srini'
+      state: present
+
+  - name: Changing the group in httpd conf file
+    lineinfile:
+      path: /etc/httpd/conf/httpd.conf
+      regexp: 'Group apache'
+      line: 'Group apacheadm'
+      state: present
+  
+
+  - name: Changing the group in httpd conf file
+    lineinfile:
+      path: /usr/share/testpage/index.html
+      regexp: 'Welcome to solugenix<strong>Test Page'
+      line: 'Ansible demo <strong>Test Page'
+      state: present
+    when: inventory_hostname == 'ec2-3-135-248-8.us-east-2.compute.amazonaws.com'
+
+  - name: Changing the group in httpd conf file
+    lineinfile:
+      path: /usr/share/testpage/index.html
+      regexp: 'Red Hat Enterprise Linux <strong>Test Page'
+      line: 'Welcome to solugenix <strong>Test Page'
+      state: present
+    when: inventory_hostname == 'ec2-3-145-211-176.us-east-2.compute.amazonaws.com'
+
+  - name: starting https service
+    service:
+      name: httpd
+      state: restarted
+  
