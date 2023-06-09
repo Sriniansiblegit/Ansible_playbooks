@@ -1,0 +1,109 @@
+
+
+wget https://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-latest.tar.gz
+https://releases.ansible.com/ansible-tower/setup-bundle/ansible-tower-setup-bundle-latest.tar.gz
+
+check with root user 
+dnf list ansible-core
+
+install
+dnf install ansible-core.x86_64
+
+add all hosts into host file
+/etc/ansible/hosts
+
+and refer hosts path into ansible.conf file
+
+[deafault]
+
+inventory = /etc/ansible/hosts
+
+if theere is any collection error 
+ ansible-tower-setup-bundle-3.8.6-2]# ansible-galaxy collection install -p /home/ansible/ansible-tower-setup-bundle-3.8.6-2/collections/ansible_collections community.general
+
+to install tower 
+ https://developers.redhat.com/products/ansible/download
+click on the any of the version and get the direct link and do a wget to that link 
+
+no host found in automation controller automation hub automation catalog or database groups
+
+if we receive above error change inventory file as below with mastr ip
+[automationcontroller]
+18.219.195.142 ansible_connection=local
+
+
+if we receive OOM error we can change the memory below 1500 or 1064 or 2064
+/home/ansible/ansible-automation-platform-setup-bundle-2.3-1/collections/ansible_collections/ansible/automation_platform_installer/roles/preflight/defaults
+
+
+
+https://github.com/ansible/ansible-tower-samples
+
+/var/lib/awx/projects
+
+apache 
+apache 
+
+ansible
+ansible123
+
+yum erase httpd httpd-tools apr apr-util
+
+
+=======================================================
+
+[automationcontroller]
+13.59.163.31 ansible_connection=local
+[automationcontroller:vars]
+
+
+====================
+
+
+---
+- hosts: web
+  #remote_user: apache
+  become: true
+  tasks:
+  - name: Create Group for apacheadm
+    group:
+      name: apacheadm
+      state: present
+  - name: Create apacheadm Dir
+    file:
+      path: /home/apache/apacheadm
+      state: directory
+      group: apacheadm
+      owner: apache
+      mode: '2775'
+
+  - name: "installing apache"
+    yum:
+      name: httpd
+      state: latest
+  - name: "starting apache service"
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+
+
+register: inst_result
+
+- debug:
+    var: inst_result
+
+
+
+============================================
+
+ - name: Create a symbolic link
+    vars:
+      mylink: "~/home/apache/apacheadm"
+      mysrc: "/etc/httpd/logs"
+
+  - name: Creating a symlink
+    ansible.builtin.file:
+      src: "{{ mysrc }}"
+      dest: "{{ mylink }}"
+      state: link
