@@ -1,0 +1,19 @@
+---
+- hosts: fsa:&web
+  tasks:
+    -name: "disable gtm for {{app}} - {{region}}"
+     file:
+       path: "/users/cgc/shared/Akamai_GTM/httpd-digital/akamai_gtm.html"
+       state: absent
+     when: app in ["www.insurance.com", "www.stg.insurance.com"] and action == "disable" and region == "usw"
+
+    -name: "enable gtm for {{app}} - {{region}}"
+     copy:
+       src: ../files/apache/akamai_gtm.html
+       dest: "/users/cgc/shared/Akamai_GTM/httpd-digital/akamai_gtm.html"
+       owner: apache
+       group: afw
+       mode:0755
+     when: app in ["www.insurance.com", "www.stg.insurance.com"] and action == "enable" and region == "usw"
+
+  
