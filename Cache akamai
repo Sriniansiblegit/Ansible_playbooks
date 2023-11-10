@@ -1,0 +1,49 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+  - name: Preparing...
+    copy:
+       src: ../akamai_cache_clear/egcurl/
+       dest: /tmp/egcurl
+       mode: 0700
+       owner: root
+       group: root
+     tags: [cpcode,url]
+
+  - name: Excuting akamai cache clear using CPCODE
+    shell: |
+      get_data=~echo $(grep -E "(\s){{domain}}($|\s)" /tmp/egcurl/cpcodes-{{env}}.txt|cut -d ' ' -f1~
+      echo "cpcode = ${get_data} {{domain}}"
+      /tmp/egcurl/egcurl-python39 -sSik --request POST --header "Content-Type: application/json" --data-binary {\"objects\":[$((get_data))]} 'https//akamai.com/v3/{{ala_action}}/cpcode/production'
+    register: output
+    tags: cpcode
+    failed_when: false
+
+  - name: Excuting akamai cache clear using url
+    shell:
+      get_data="{{urls}}"
+      urls=~echo ${get_data}|tr "," "\n"|tr " " "\n"~
+      for url in ~echo ${urls}~
+      do
+      echo -e "\nClearing cache for ${url}\n"
+      /tmp/egcurl/egcurl-python39 -sSik --request POST --header "Content-Type: application/json" --data-binary {\"objects\":[\"${url}\"]} 'https//akamai.com/v3/{{ala_action}}/url/production'
+      done
+    register: output
+    tags:url
+    failed_when: false
+  - name: cleanup temporary files
+    file:
+      path: "/tmp/egcurl/"
+      state: absent
+    tags: [cpcode,url]
+    failed_when: false
+  - name: result
+    debug:
+      msg: "{{ output.stdout_lines}}
+    failed_when: "'Request accepted' not in output.stdout"
+    tags: [cpcode,url]
+    
+    
+    
