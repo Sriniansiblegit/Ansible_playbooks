@@ -59,6 +59,6 @@
   - name: starting https service
     service:
       name: httpd
-      state: restarted
+      state: restarted      
 
   
