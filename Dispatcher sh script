@@ -1,18 +1,1 @@
-#!/bin/bash
 
-CACHE="/users/httpd-digital/htdocs/cache"
-CONTENT=~ls -a ${CACHE}~
-CONTENT=~ echo ${CONTENT} | sed -e 's/\. \.\.\ *//'~
-
-
-if [ -z "$CONTENT" ]; then echo "No cache to clear"
-else
- IFS=' '
- for file in ${CONTENT}
- do
-  FILE="${CACHE}/${FILE}"
-  echo -n "deketing "
-  if [ -d "${CACHE}/{file}" ]; then echo "folder ${FILE}"; else echo "file ${FILE}"; fi
-  rm -rf "${FILE}"
- done
-fi
