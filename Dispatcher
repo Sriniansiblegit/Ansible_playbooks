@@ -1,13 +1,1 @@
----
-- hosts: all
-  Tasks:
-        - name: Copy Dispatcher clear script to /tmp
-          Copy:
-               Src: dispatcher_cache_clear.sh
-               Dest: /tmp/dispatcher_cache_clear.sh
-               Mode: '0700'
-        - name: Clear dispatcher cache
-          Shell: '/tmp/dispatcher_cache_clear.sh'
-          Register: command_output
-        - debug:
-              Var: command_output.stdout_lines
+
