@@ -1,1 +1,24 @@
+---
+- name: Install apache
+- hosts: all
+  #remote_user: root
+  become: true
+  tasks:
+  - name: Installing apache
+    yum:
+      name: httpd
+      state: latest
 
+  - name: Changing the group in httpd conf file
+    lineinfile:
+      path: /usr/share/testpage/index.html
+      regexp: 'Red Hat Enterprise Linux <strong>Test Page'
+      line: 'Welcome to solugenix <strong>Test Page'
+      state: present
+
+  - name: starting https service
+    service:
+      name: httpd
+      state: restarted                      
+
+  
